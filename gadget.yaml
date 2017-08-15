@@ -1,0 +1,37 @@
+device-tree: exynos5422-odroidxu4.dtb
+volumes:
+  odroid-xu4:
+    schema: mbr
+    bootloader: u-boot
+    structure:
+      - name: bl1
+        type: bare
+        size: 15360
+        offset: 512
+        content:
+          - image: bl1.bin.hardkernel
+      - name: bl2
+        type: bare
+        size: 14848
+        offset: 15872
+        content:
+          - image: bl2.bin.hardkernel
+      - name: u-boot
+        type: bare
+        size: 287744
+        offset: 32256
+        content:
+          - image: u-boot.bin
+      - name: tzsw
+        type: bare
+        size: 262144
+        offset: 368128
+        content:
+          - image: tzsw.bin.hardkernel
+      - type: 0C
+        filesystem: vfat
+        filesystem-label: system-boot
+        size: 128M
+        content:
+          - source: boot-assets/
+            target: /

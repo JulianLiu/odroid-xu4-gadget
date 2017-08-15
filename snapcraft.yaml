@@ -1,0 +1,68 @@
+name: odroid-xu4
+version: 16-0.1
+summary: Hardkernel odroid xu4 support package
+description: |
+ Support files for booting the odroid xu4
+type: gadget
+architectures:
+  - armhf
+confinement: strict
+grade: stable
+
+parts:
+  uboot:
+    plugin: make
+    source: git://github.com/JulianLiu/u-boot-odroid
+    source-branch: odroidxu3-v2012.07
+    prepare: |
+      make odroid_config
+    build: |
+      if [ "$(arch)" = "x86_64" ]; then
+        if [ ! -x /usr/bin/arm-linux-gnueabihf-gcc ]; then
+          echo "ERROR: You are cross building this snap, please install gcc-arm-linux-gnueabihf"
+          exit 1
+        fi
+        CROSS_COMPILE=arm-linux-gnueabihf- make
+      else
+        make
+      fi
+    install: |
+      cp u-boot.bin $SNAPCRAFT_PART_INSTALL/u-boot.bin
+    build-packages:
+      - bc
+      - build-essential
+      - device-tree-compiler
+      - libpython2.7-dev
+      - python-minimal
+
+  prebuilt:
+    plugin: dump
+    source: prebuilt
+    install: |
+      ln -s uboot.env $SNAPCRAFT_PART_INSTALL/uboot.conf
+
+slots:
+  i2c-1:
+    interface: i2c
+    path: /dev/i2c-1
+  i2c-2:
+    interface: i2c
+    path: /dev/i2c-2
+  gpio-18:
+    interface: gpio
+    number: 18
+  gpio-19:
+    interface: gpio
+    number: 19
+  gpio-23:
+    interface: gpio
+    number: 23
+  gpio-24:
+    interface: gpio
+    number: 24
+  gpio-25:
+    interface: gpio
+    number: 25
+  gpio-34:
+    interface: gpio
+    number: 34
